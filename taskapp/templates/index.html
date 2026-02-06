@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Profile</title>
+
+<style>
+body{
+font-family:Arial;
+padding:40px;
+background:#f5f5f5;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:8px;
+margin-bottom:20px;
+box-shadow:0 0 10px #ccc;
+}
+
+.skill{
+display:inline-block;
+background:#222;
+color:white;
+padding:4px 10px;
+border-radius:20px;
+margin:3px;
+font-size:12px;
+}
+
+input{
+padding:8px;
+}
+
+button{
+padding:8px 15px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>My Profile</h1>
+
+<div class="card">
+<p><b>Name:</b> <span id="name"></span></p>
+<p><b>Email:</b> <span id="email"></span></p>
+<p><b>Education:</b> <span id="edu"></span></p>
+</div>
+
+<input id="skill" placeholder="Search skill (python)">
+<button onclick="loadProjects()">Search</button>
+
+<div id="projects"></div>
+
+<script>
+
+// Load profile
+fetch(`/profile/`)
+.then(r=>r.json())
+.then(d=>{
+document.getElementById("name").innerText=d.name;
+document.getElementById("email").innerText=d.email;
+document.getElementById("edu").innerText=d.education;
+})
+
+// Load projects
+function loadProjects(){
+
+let skill=document.getElementById("skill").value;
+
+fetch(`/projects/?skill=${skill}`)
+.then(r=>r.json())
+.then(data=>{
+
+let html="";
+
+data.forEach(p=>{
+
+let skills="";
+p.skills.forEach(s=>{
+skills+=`<span class="skill">${s.name}</span>`;
+})
+
+html+=`
+<div class="card">
+<h3>${p.title}</h3>
+<p>${p.description}</p>
+${skills}
+<br><br>
+<a href="${p.link}" target="_blank">View Project</a>
+</div>
+`
+
+})
+
+document.getElementById("projects").innerHTML=html;
+
+})
+
+}
+
+</script>
+
+
+</body>
+</html>
